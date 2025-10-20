@@ -1,0 +1,1109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;800&display=swap');
+@import "tailwindcss";
+/* Attractive animated global background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -999;
+  background: radial-gradient(1200px 600px at 10% 20%, rgba(107,214,255,0.08), transparent 10%),
+              radial-gradient(900px 500px at 85% 80%, rgba(30,94,255,0.06), transparent 8%),
+              linear-gradient(180deg, #071025 0%, #0b1a2b 25%, #0f2840 50%, #071025 100%);
+  background-blend-mode: screen, screen, normal;
+  animation: bg-shift 12s ease-in-out infinite alternate;
+  filter: saturate(1.05) contrast(1.02) brightness(0.98);
+}
+
+@keyframes bg-shift {
+  0% { transform: scale(1) translateY(0); filter: hue-rotate(0deg) brightness(0.96); }
+  100% { transform: scale(1.02) translateY(-6px); filter: hue-rotate(6deg) brightness(1.02); }
+}
+
+/* Make sure modal overlay backgrounds still work by placing them above the animated background */
+.modal-overlay { z-index: 60; }
+
+:root {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.92);
+  /* base background kept transparent here; body will provide the attractive gradient */
+  background-color: transparent;
+
+  /* theme colors */
+  --primary: #1e5eff; /* weekday blue */
+  --accent: #6bd6ff;  /* light cyan accent */
+  --card-surface: rgba(255,255,255,0.035);
+  --card-border: rgba(30,94,255,0.18);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Heading entrance animation: subtle slide up and fade in */
+@keyframes heading-in {
+  0% { opacity: 0; transform: translateY(18px) scale(0.995); }
+  60% { opacity: 1; transform: translateY(-6px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.heading-animate {
+  animation: heading-in 700ms cubic-bezier(.2,.9,.25,1) both;
+  will-change: transform, opacity;
+}
+
+/* unified page enter animation */
+@keyframes page-enter {
+  0% { opacity: 0; transform: translateY(10px) scale(0.995); }
+  60% { opacity: 1; transform: translateY(-6px) scale(1.005); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.page-enter { animation: page-enter 520ms cubic-bezier(.2,.9,.25,1) both; }
+
+/* subtle page exit (used by welcome fadeout previously) */
+@keyframes page-exit { 0%{ opacity:1; } 100%{ opacity:0; transform: translateY(-8px); } }
+.page-exit { animation: page-exit 320ms ease-out both; }
+
+/* Page-level subtle fade-in for main containers */
+@keyframes page-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-fade-in { animation: page-fade 520ms ease-out both; }
+
+/* Card pop-in with slight bounce for lists and modal cards */
+@keyframes card-pop {
+  0% { opacity: 0; transform: translateY(18px) scale(0.985); }
+  60% { opacity: 1; transform: translateY(-6px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.card-entrance { animation: card-pop 640ms cubic-bezier(.2,.9,.25,1) both; }
+
+/* Stagger utilities (use as inline style with --i) */
+.stagger-container > * { opacity: 0; transform: translateY(8px); animation: card-pop 620ms cubic-bezier(.2,.9,.25,1) both; }
+.stagger-container > * { animation-delay: calc(var(--i, 0) * 80ms); }
+
+/* Floating decorative accents for background (small subtle motion) */
+@keyframes float-slow { 0%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } 100%{ transform: translateY(0) } }
+.floating-acc { animation: float-slow 6s ease-in-out infinite; opacity: 0.85 }
+
+/* Button shine effect */
+@keyframes btn-shine { 0%{ background-position: -200% 0 } 100%{ background-position: 200% 0 } }
+.btn-shiny { position: relative; overflow: hidden; }
+.btn-shiny::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+  transform: skewX(-18deg);
+  top: -10%;
+  left: -40%;
+  width: 60%;
+  height: 120%;
+  pointer-events: none;
+  opacity: 0; transition: opacity 240ms ease;
+}
+.btn-shiny:hover::after { opacity: 1; animation: btn-shine 900ms linear both; }
+
+/* subtle focus ring for interactive elements */
+.focus-ring:focus { box-shadow: 0 0 0 6px rgba(99,102,241,0.12); outline: none }
+
+/* Apply to common containers for immediate effect */
+.card { will-change: transform, opacity; }
+.planner-card { animation: card-pop 640ms cubic-bezier(.2,.9,.25,1) both; }
+.login-hero .signup-title, .planner-card h1 { text-transform: uppercase; letter-spacing: 1px }
+
+/* Glow effect for headings */
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #1e5eff44,
+                 0 0 20px #1e5eff33,
+                 0 0 30px #1e5eff22;
+  }
+  to {
+    text-shadow: 0 0 20px #1e5eff66,
+                 0 0 30px #1e5eff44,
+                 0 0 40px #1e5eff33;
+  }
+}
+
+/* softer glow effect */
+@keyframes glow-soft {
+  from {
+    text-shadow: 0 0 3px #fff, 0 0 6px #1e5eff, 0 0 9px #1e5eff;
+  }
+  to {
+    text-shadow: 0 0 8px #fff, 0 0 16px #1e5eff, 0 0 20px #1e5eff;
+  }
+}
+
+/* stronger glow effect for important headings */
+@keyframes glow-strong {
+  from {
+    text-shadow: 0 0 8px #fff, 0 0 16px #1e5eff, 0 0 32px #1e5eff;
+  }
+  to {
+    text-shadow: 0 0 24px #fff, 0 0 48px #1e5eff, 0 0 64px #1e5eff;
+  }
+}
+
+/* very soft cyan glow animation for headings */
+@keyframes glow-cyan-soft {
+  from {
+    text-shadow: 0 0 1.5px #6bd6ff, 0 0 3px #1e5eff, 0 0 4.5px #6bd6ff;
+  }
+  to {
+    text-shadow: 0 0 4px #6bd6ff, 0 0 8px #1e5eff, 0 0 10px #6bd6ff;
+  }
+}
+
+/* ensure root spans full viewport so full-bleed bg works */
+html, body, #root {
+  height: 100%;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* App layout */
+.app-root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Login page specific styles */
+
+.login-page {
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* let background reach edges */
+  box-sizing: border-box;
+  background: none; /* background handled by pseudo */
+}
+
+/* App header */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6,18,50,0.78);
+  z-index: 10;
+  backdrop-filter: blur(6px);
+}
+.app-header-inner { color: #fff; font-weight:700; font-size:1.1rem }
+
+/* right side header controls (login/signup) */
+.header-right {
+  position: absolute;
+  right: 1rem;
+  top: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.header-btn {
+  padding: 0.45rem 0.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.04);
+  font-weight: 700;
+}
+.header-btn:hover { background: rgba(255,255,255,0.09); }
+
+/* back button click effect (pulse/scale) */
+.header-back.btn-effect {
+  transform: scale(0.96);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45) inset;
+  transition: transform 0.32s cubic-bezier(.2,.9,.2,1), box-shadow 0.32s;
+}
+
+/* larger top header */
+.app-header-inner { font-size: 1.6rem; letter-spacing: 0.6px }
+
+/* ensure main content sits below header */
+.app-root, .login-page, .card { padding-top: 72px; }
+
+/* Planner full-screen page */
+.planner-page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  box-sizing: border-box;
+}
+
+.planner-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* fallback background: a warm gradient layered over a reliable Unsplash photo so
+     the planner is readable even if a local image isn't present */
+  background-image:
+    linear-gradient(180deg, rgba(8,10,14,0.68), rgba(8,10,14,0.68)),
+    url('https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: -2;
+  /* slightly darken and desaturate for text contrast */
+  filter: saturate(0.98) contrast(1.02) brightness(0.86);
+}
+
+/* playful emoji overlay on planner background */
+/* emoji overlay removed per request */
+
+/* planner-card sits above the background with semi-transparent surface */
+.planner-card {
+  /* make the planner card take ~80% of viewport for a roomy central modal */
+  max-width: none;
+  width: 96vw;
+  min-width: 840px;
+  min-height: 78vh;
+  background: linear-gradient(180deg, var(--card-surface), rgba(255,255,255,0.02));
+  border: 1px solid var(--card-border);
+  box-shadow: 0 36px 140px rgba(8,20,60,0.75);
+  border-radius: 18px;
+  padding: 3.25rem; /* roomy internal padding */
+  z-index: 2;
+  box-sizing: border-box;
+  overflow: auto; /* allow content scroll if needed */
+}
+
+/* Planner layout: body + footer */
+.planner-title { text-align: center; font-size: 4.8rem; font-weight: 900; line-height: 1.02; }
+.planner-sub { 
+  text-align: center; 
+  margin-top: 0.35rem; 
+  color: #063970; /* dark navy for contrast */
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.45);
+  display: block;
+  background: #d7f1ff; /* light blue pill */
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 6px 22px rgba(0,0,0,0.14);
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 900px) {
+  .planner-sub { font-size: 1.1rem; padding: 6px 10px; }
+  .planner-title { font-size: 2.6rem; }
+}
+.planner-body { padding-top: 1.75rem; padding-bottom: 2rem; }
+.planner-footer { border-top: 1px solid rgba(255,255,255,0.03); padding-top: 1rem; margin-top: 1.25rem; position: sticky; bottom: 0; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02)); }
+
+/* larger, white selects for day and meals */
+/* explicit white selects (override darker .input background) */
+.select-day {
+  font-size: 1.15rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  /* glassy translucent white */
+  background: rgba(255,255,255,0.72) !important;
+  color: #102034 !important;
+  border: 1px solid rgba(255,255,255,0.38);
+  min-width: 240px;
+  box-shadow: 0 6px 18px rgba(6,10,18,0.12);
+  backdrop-filter: blur(6px) saturate(1.06);
+}
+.meal-select {
+  font-size: 1.05rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.72) !important;
+  color: #102034 !important;
+  border: 1px solid rgba(255,255,255,0.38);
+  width: 100%;
+  box-shadow: 0 6px 18px rgba(6,10,18,0.12);
+  backdrop-filter: blur(6px) saturate(1.06);
+}
+.select-day:focus, .meal-select:focus {
+  outline: none;
+  border-color: rgba(99,102,241,0.95);
+  box-shadow: 0 0 0 6px rgba(99,102,241,0.10);
+}
+
+/* make the people number inputs match the select styling */
+.people-input {
+  font-size: 1.05rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.72) !important;
+  color: #102034 !important;
+  border: 1px solid rgba(255,255,255,0.38);
+  box-shadow: 0 6px 18px rgba(6,10,18,0.08);
+  width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(6px) saturate(1.06);
+}
+.people-input:focus {
+  outline: none;
+  border-color: rgba(99,102,241,0.95);
+  box-shadow: 0 0 0 6px rgba(99,102,241,0.10);
+}
+
+/* ensure the dropdown arrows remain visible on white background */
+.select-day, .meal-select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: linear-gradient(45deg, transparent 50%, rgba(0,0,0,0.32) 50%), linear-gradient(135deg, rgba(0,0,0,0.32) 50%, transparent 50%); background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px); background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; }
+
+
+/* Make the planner card appear larger and more centered on wide screens */
+/* Fixed-width planner modal on desktop for a consistent centered layout */
+@media (min-width: 900px) {
+  .planner-card {
+    /* on medium+ screens keep 96vw and increase padding and height */
+    width: 96vw;
+    min-width: 1100px;
+    min-height: 82vh;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5rem; /* roomy padding */
+  }
+}
+
+@media (min-width: 1400px) {
+  .planner-card {
+    width: 96vw;
+    min-width: 1400px;
+    min-height: 86vh;
+    padding: 5.5rem;
+  }
+}
+
+/* make the Weekly Planner heading and subtitle pop with theme colors */
+.planner-card h1 {
+  color: #ffd166; /* warm high-contrast amber */
+  margin-top: 0;
+  font-size: 3.4rem;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.55);
+}
+.planner-card .small-muted {
+  color: #000000; /* instruction text in black for clarity */
+  opacity: 0.95;
+  margin-top: 0.25rem;
+  text-shadow: none;
+}
+
+.login-page::before {
+  /* full-bleed background */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(4,10,20,0.55), rgba(4,10,20,0.55)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: -2;
+}
+
+.login-page .card {
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  z-index: 2; /* ensure card sits above the background */
+}
+
+.login-hero {
+  text-align: center;
+}
+
+.login-hero h1, .login-hero .signup-title {
+  color: #ffd166; /* warm accent */
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.login-hero .small-muted { color: rgba(255,255,255,0.85); margin-top: 6px }
+
+
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 900px;
+  width: 100%;
+  color: inherit;
+}
+
+.login-form {
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* merged background inputs: make them look like a single connected panel */
+.input.merged {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: none;
+}
+
+/* large translucent rounded inputs, placeholder large and soft color */
+.input.large {
+  width: 100%;
+  max-width: 940px;
+  padding: 0.9rem 1.2rem; /* reduced vertical padding */
+  border-radius: 12px;
+  background: rgba(255,255,255,0.92);
+  color: #333;
+  font-size: 1.15rem; /* slightly smaller text */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  border: 1px solid rgba(16,24,40,0.06);
+}
+.input.large::placeholder {
+  color: rgba(16,24,40,0.45);
+  font-size: 1.15rem;
+}
+
+.signup-title {
+  color: #ffd166; /* warm accent */
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-family: 'Poppins', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-size: 2.1rem;
+  white-space: nowrap; /* keep on single line */
+  text-overflow: ellipsis;
+  overflow: visible;
+  text-shadow: 0 2px 18px rgba(255,209,102,0.08);
+}
+
+.bright-label {
+  align-self: flex-start;
+  width: 100%;
+  max-width: 360px;
+  color: #9be7ff; /* bright cyan */
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+/* Meal labels: customize font, weight and colors for Breakfast/Lunch/Dinner */
+.meal-label { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; font-size: 1.15rem; font-weight: 800; }
+.meal-breakfast { color: #ffb4a2; /* warm peach */ }
+.meal-lunch     { color: #ffd166; /* amber */ }
+.meal-dinner    { color: #9be7ff; /* cyan (keep theme) */ }
+
+/* modal overlay for embedded login */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* use the same background treatment as the create-account/login page */
+  background-image: linear-gradient(rgba(4,10,20,0.55), rgba(4,10,20,0.55)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center center;
+  z-index: 60;
+}
+.modal-card {
+  width: 420px;
+  max-width: 95%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+/* admin-modal: taller vertical modal for admin panel */
+.admin-modal {
+  width: 720px;
+  max-width: 95%;
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+/* Authenticated admin panel modal specific overrides */
+.admin-panel-modal {
+  /* semi-transparent black background so underlying image shows through */
+  background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.55));
+  border: 1px solid rgba(255,255,255,0.04);
+  width: 820px; /* slightly wider */
+  max-width: 96%;
+  max-height: calc(100vh - 80px); /* increase height */
+  margin-top: -20px; /* move slightly upwards */
+  overflow-y: auto; /* vertical scrollbar when needed */
+  padding-bottom: 120px; /* space for sticky admin-actions */
+  box-shadow: 0 40px 160px rgba(0,0,0,0.5);
+}
+
+/* visible custom scrollbar for the admin panel modal */
+.admin-panel-modal::-webkit-scrollbar { width: 14px; }
+.admin-panel-modal::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 8px; }
+.admin-panel-modal::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border-radius: 8px; border: 3px solid rgba(0,0,0,0.45); }
+.admin-panel-modal { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) rgba(0,0,0,0.02); }
+
+/* project title inside modal */
+/* modal project title / modal-back were removed to match reference layout */
+
+/* Ensure inputs and buttons inside the admin modal align horizontally and don't wrap prematurely */
+.modal-card.admin-modal .input { max-width: none; }
+.modal-card.admin-modal .big-add { margin-left: 8px; white-space: nowrap; align-self: center; }
+.modal-card.admin-modal .current-lists { margin-top: 18px; }
+
+/* Admin panel grid: left side fields, right side stacked action buttons */
+.admin-panel-grid {
+  display: block; /* single column layout; rows handle inline buttons */
+}
+.admin-panel-left { min-width: 420px; }
+.admin-row { display:flex; gap: 12px; align-items: center; }
+.admin-row .input { flex: 1 1 auto; }
+.admin-row .big-add { white-space: nowrap; }
+
+.card .input { border-radius: 8px; }
+
+.input::placeholder { color: rgba(255,255,255,0.7); }
+
+/* admin login large white inputs */
+.input.admin-large {
+  width: 100%;
+  padding: 0.9rem 1.2rem; /* reduced vertical padding */
+  border-radius: 18px;
+  background: rgba(255,255,255,0.95);
+  color: #444;
+  font-size: 1.4rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  border: 1px solid rgba(0,0,0,0.06);
+  max-width: 1200px;
+  margin-bottom: 12px; /* create separation between stacked fields */
+}
+.input.admin-large::placeholder { color: rgba(80,80,80,0.6); font-size: 1.4rem; }
+
+/* Make inputs opaque and high-contrast so text is always readable over the background image */
+.input {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  /* solid-ish background to avoid background image bleeding through */
+  background: rgba(0,0,0,0.65);
+  color: #ffffff; /* ensure high contrast text */
+  width: 100%;
+  max-width: 360px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  line-height: 1.2;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  transition: box-shadow 0.15s, border-color 0.15s, transform 0.06s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgba(99,102,241,0.95);
+  box-shadow: 0 0 0 4px rgba(99,102,241,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+  transform: translateY(-1px);
+}
+
+/* Nutrients modal styles (match welcome page look/feel) */
+.nutrients-root { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; z-index:80; }
+.nutrients-card { width: 90%; max-width: 720px; border-radius: 16px; padding: 1.5rem; background: linear-gradient(180deg, #060606, #0b0b0b); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 40px 160px rgba(4,10,20,0.6); color: #fff; position:relative; overflow: visible; }
+.nutrients-card h2 { margin: 0 0 .25rem 0; font-size: 2rem; color: #ffd166; text-align:center; font-weight:800; letter-spacing:0.6px; }
+.nutrients-card p { margin: 0 0 .75rem 0; color: rgba(255,255,255,0.9); text-align:center; }
+.nutrients-list { max-height: 52vh; overflow: auto; padding: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 10px; }
+.nutrients-list li { padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 8px; }
+.nutrients-actions { display:flex; justify-content:flex-end; margin-top: 12px; }
+.nutrients-root .btn { min-width: 120px; }
+.nutrients-back-btn {
+  background: rgb(255,182,193);
+  color: #3b1b2b; /* contrast dark text */
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(255,182,193,0.12);
+}
+.nutrients-back-btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
+
+/* subtle entrance animation like welcome */
+.card-entrance { animation: card-pop 360ms cubic-bezier(.2,.9,.3,1); }
+
+/* heading sparkle animation */
+@keyframes heading-pop {
+  0% { transform: translateY(-6px) scale(0.98); opacity: 0; }
+  60% { transform: translateY(0) scale(1.02); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.nutrients-card h2 { animation: heading-pop 520ms cubic-bezier(.2,.9,.25,1); }
+
+/* small floating emojis inside nutrients card */
+.nutrients-card .float-emoji { position: absolute; font-size: 1.4rem; opacity: 0; transform: translateY(6px) scale(0.98); pointer-events: none; }
+.nutrients-card .e1 { left: 8px; top: 10px; animation: float-up 4200ms ease-in-out 0ms infinite both; }
+.nutrients-card .e2 { right: 8px; top: 10px; animation: float-up 4800ms ease-in-out 300ms infinite both; }
+.nutrients-card .e3 { left: 14px; bottom: 12px; animation: float-up 5200ms ease-in-out 700ms infinite both; }
+.nutrients-card .e4 { right: 14px; bottom: 18px; animation: float-up 4600ms ease-in-out 1100ms infinite both; }
+.nutrients-card .e5 { left: 40%; top: -6px; font-size: 1.6rem; opacity: 0.85; animation: float-up 5600ms ease-in-out 150ms infinite both; }
+.nutrients-card .e6 { right: 38%; bottom: -8px; font-size: 1.1rem; opacity: 0.85; animation: float-up 6000ms ease-in-out 600ms infinite both; }
+
+
+/* In case a light theme is used, ensure inputs remain readable */
+@media (prefers-color-scheme: light) {
+  .input {
+    background: rgba(255,255,255,0.94);
+    color: #0b1220;
+    border: 1px solid rgba(16,24,40,0.06);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  .input::placeholder { color: rgba(13,17,23,0.45); }
+}
+
+.btn {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg,var(--primary),var(--accent));
+  color: #042;
+  font-weight: 700;
+  box-shadow: 0 10px 28px rgba(30,94,255,0.18);
+  padding: 0.9rem 1.4rem;
+  font-size: 1.05rem;
+}
+
+/* Ensure Add to List uses the same visual style as Export as PDF (primary) */
+.add-to-list-btn {
+  margin-left: 4px;
+  background: linear-gradient(90deg,var(--primary),var(--accent));
+  color: #042;
+  font-weight: 800;
+  box-shadow: 0 10px 28px rgba(30,94,255,0.18);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 0.9rem 1.4rem;
+  font-size: 1.05rem;
+}
+
+/* stronger hover and focus for primary actions */
+.btn-primary:hover, .add-to-list-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 48px rgba(30,94,255,0.28);
+}
+.btn-primary:focus, .add-to-list-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(99,102,241,0.16), 0 16px 48px rgba(30,94,255,0.22);
+}
+
+/* slightly larger generic button defaults */
+.btn { padding: 0.9rem 1.2rem; font-size: 1rem; border-radius: 10px; }
+
+/* Admin background and big add button */
+.admin-bg {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start; /* align to top to make scrolling natural */
+  justify-content: center;
+  /* food background with a dark overlay for contrast */
+  background-image: linear-gradient(rgba(6,10,15,0.55), rgba(6,10,15,0.55)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=2000&q=80');
+  background-size: cover;
+  background-position: center center;
+  z-index: 0; /* bring admin background into the normal stacking context */
+}
+
+/* make sure the admin card is interactive and sits above most UI elements */
+.admin-bg .card {
+  position: relative;
+  z-index: 30;
+  pointer-events: auto;
+  /* constrain height and allow internal scrolling when content overflows */
+  max-height: calc(100vh - 96px);
+  overflow: auto;
+  padding-bottom: 96px; /* space for sticky action bar */
+}
+
+/* make sure admin card starts below the fixed header so the "Add Recipe" heading is visible */
+.admin-bg .card { margin-top: 56px; }
+
+/* action bar inside admin card stays visible */
+.admin-actions {
+  position: sticky;
+  bottom: 12px;
+  display: flex;
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0));
+  padding: 8px 0 0 0;
+}
+
+/* New admin layout helpers for consistent inputs and buttons */
+.admin-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.admin-row--spaced { margin-bottom: 6px; }
+/* default field (non-growing) gets a fixed width so columns align across rows */
+/* Non-growing field width controls the width of qty/info boxes and the action button column */
+.admin-field { display: flex; align-items: center; flex: 0 0 360px; }
+/* growable field takes remaining space but has a min width to keep layout stable */
+.admin-field--grow { flex: 1 1 0; min-width: 360px; }
+.admin-input { padding: 0.75rem 1rem; border-radius: 10px; font-size: 1rem; width: 100%; box-sizing: border-box; }
+.admin-action-btn {
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  color: #042;
+  font-weight: 800;
+  box-shadow: 0 10px 28px rgba(30,94,255,0.18);
+  border: none;
+  cursor: pointer;
+  min-width: 360px; /* match the qty/info column width */
+}
+
+/* subtle pop-in animation for action buttons */
+.admin-action-btn {
+  animation: btn-pop 420ms cubic-bezier(.2,.9,.25,1) both;
+  will-change: transform, opacity;
+  animation-delay: var(--btn-delay, 120ms);
+}
+
+@keyframes btn-pop {
+  0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+  60% { opacity: 1; transform: translateY(-4px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.admin-action-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(30,94,255,0.22); }
+
+/* Enhanced admin visuals */
+.admin-hero { text-align: center; margin-bottom: 18px; }
+.admin-hero .signup-title { background: linear-gradient(90deg,#ffd166,#6bd6ff); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 2rem; letter-spacing: 1px; }
+.admin-hero .small-muted { color: rgba(255,255,255,0.7); margin-top: 6px; }
+
+/* Match heights for inputs and buttons */
+.admin-input, .admin-action-btn { height: 48px; }
+.admin-action-btn { display: inline-flex; align-items: center; justify-content: center; }
+
+/* subtle card style for lists */
+.current-lists .col { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius: 10px; padding: 16px; }
+.current-item { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.current-item:last-child { border-bottom: none; }
+
+/* make Remove button compact but visible */
+.current-item .btn { padding: 8px 12px; border-radius: 8px; }
+
+
+/* Layout for showing current ingredients and nutrients side-by-side */
+.current-lists {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.current-lists .col {
+  flex: 1 1 48%;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 12px;
+  border-radius: 8px;
+}
+.current-lists .col strong { display: block; margin-bottom: 8px; }
+.current-item { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 6px 0; }
+.current-item .item-text { color: #fff; }
+
+/* Make Remove button in admin panel visible and styled */
+.current-item .btn {
+  background: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 12px;
+  font-size: 0.95em;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.current-item .btn:hover {
+  background: #ff3b3b;
+}
+
+@media (max-width: 820px) {
+  .current-lists { flex-direction: column; }
+  .current-lists .col { width: 100%; }
+}
+
+.big-add {
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #1e5eff, #6bd6ff);
+  color: #042;
+  font-weight: 800;
+  box-shadow: 0 10px 30px rgba(30,94,255,0.18);
+}
+
+/* Animated background removed */
+
+.planner-grid {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.planner-grid::-webkit-scrollbar { height: 10px; }
+.planner-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 8px; }
+
+.day-card {
+  min-width: 300px;
+  flex: 0 0 300px;
+  height: 340px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(10,20,40,0.06));
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.day-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+}
+
+/* inner content sits above background image */
+.day-card-inner { position: relative; z-index: 2; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+
+/* selected card shows a background image with overlay */
+.day-card.selected::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(6,8,12,0.45), rgba(6,8,12,0.45)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=60');
+  background-size: cover;
+  background-position: center center;
+  filter: saturate(0.95) contrast(1.02) brightness(0.7) ;
+  z-index: 1;
+  transform: scale(1);
+  transition: transform 0.3s ease, opacity 0.25s ease;
+}
+
+.day-card.selected { border-color: var(--primary); box-shadow: 0 14px 40px rgba(30,94,255,0.12); }
+
+.day-card .input { 
+  background: rgba(255,255,255,0.96); 
+  color: #0b1220; 
+  border: 1px solid rgba(16,24,40,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* Weekday heading visibility */
+.day-card-inner h3 {
+  color: #ff6b6b; /* bright coral for weekday names */
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  font-size: 1.35rem; /* increased size for better visibility */
+}
+
+/* When a card is selected the background is darker so switch heading to light */
+.day-card.selected .day-card-inner h3 {
+  color: #ffffff;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.45);
+}
+
+/* day badge removed — weekday name is shown directly in the card */
+
+/* style select dropdown arrow and padding */
+.day-card .input[type="text"],
+.day-card .input[type="number"],
+.day-card select.input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 2.2rem;
+  position: relative;
+}
+
+.day-card select.input { background-image: linear-gradient(45deg, transparent 50%, rgba(0,0,0,0.35) 50%), linear-gradient(135deg, rgba(0,0,0,0.35) 50%, transparent 50%); background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px); background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; }
+
+.day-card .input:focus {
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(30,94,255,0.12);
+  border-color: rgba(30,94,255,0.95);
+}
+
+.small-muted { color: rgba(255,255,255,0.6); font-size:0.9rem }
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* ---------------- Welcome splash styles ---------------- */
+.welcome-page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 80;
+  background: radial-gradient(ellipse at center, rgba(3,6,12,0.85), rgba(3,6,12,0.95));
+}
+.welcome-root { width: 100%; display: flex; justify-content: center; padding: 3rem; box-sizing: border-box; }
+.welcome-card {
+  max-width: 920px;
+  width: 96%;
+  border-radius: 16px;
+  padding: 2.6rem;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.04);
+  text-align: center;
+  box-shadow: 0 40px 140px rgba(0,0,0,0.7);
+}
+.welcome-title { font-family: 'Poppins', sans-serif; font-size: 2.6rem; font-weight: 800; color: #ffd166; margin: 0 0 0.4rem 0; animation: heading-in 900ms both; }
+.welcome-sub { color: rgba(255,255,255,0.88); font-size: 1.05rem; margin: 0 0 1.25rem 0; }
+
+/* decorative waves that animate in/out */
+.welcome-anim { position: relative; height: 120px; margin: 0.25rem auto 1.25rem auto; display: flex; align-items: center; justify-content: center; overflow: visible; }
+.wave { position: absolute; width: 260px; height: 260px; border-radius: 50%; opacity: 0.06; filter: blur(28px); transform: translateY(0); }
+.wave-1 { background: radial-gradient(circle at 30% 30%, #ffd166, transparent 40%); left: 8%; top: -40px; animation: wave-zoom 30s linear forwards; }
+.wave-2 { background: radial-gradient(circle at 50% 50%, #6bd6ff, transparent 40%); left: 38%; top: -30px; animation: wave-zoom 28s linear forwards; }
+.wave-3 { background: radial-gradient(circle at 70% 70%, #ffb4a2, transparent 40%); left: 68%; top: -45px; animation: wave-zoom 32s linear forwards; }
+
+@keyframes wave-zoom {
+  0% { transform: scale(0.85) translateY(0); opacity: 0.02; }
+  10% { opacity: 0.09; }
+  50% { transform: scale(1.08) translateY(-8px); opacity: 0.12; }
+  90% { opacity: 0.06; }
+  100% { transform: scale(1.2) translateY(-14px); opacity: 0.01; }
+}
+
+/* The welcome card remains visible until the user clicks the CTA.
+   Removed the timed fade-out so it does not auto-dismiss. */
+.welcome-card { animation: none; }
+
+.welcome-actions { display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 0.8rem; }
+.welcome-actions .small-muted { color: rgba(255,255,255,0.72); }
+
+/* Make the welcome splash responsive and visually pleasing on small screens */
+@media (max-width: 520px) {
+  .welcome-card { padding: 1.25rem; }
+  .welcome-title { font-size: 1.6rem; }
+  .welcome-anim { height: 84px; }
+}
+
+/* Provide a quick accessible skip button look */
+.welcome-card .btn { margin: 0; }
+
+/* floating emojis inside the welcome area */
+.floating-icons { position: absolute; inset: 0; pointer-events: none; }
+.float-emoji { position: absolute; font-size: 1.4rem; opacity: 0; transform: translateY(6px) scale(0.98); }
+.float-emoji.e1 { left: 12%; top: 18%; animation: float-up 4200ms ease-in-out 0ms infinite both; }
+.float-emoji.e2 { left: 30%; top: 36%; animation: float-up 4800ms ease-in-out 300ms infinite both; }
+.float-emoji.e3 { left: 62%; top: 22%; animation: float-up 5200ms ease-in-out 700ms infinite both; }
+.float-emoji.e4 { left: 78%; top: 40%; animation: float-up 4600ms ease-in-out 1100ms infinite both; }
+
+@keyframes float-up {
+  0% { opacity: 0; transform: translateY(10px) scale(0.96) rotate(-6deg); }
+  20% { opacity: 1; transform: translateY(-6px) scale(1.04) rotate(0deg); }
+  60% { transform: translateY(-16px) scale(1.02) rotate(4deg); }
+  100% { opacity: 0; transform: translateY(-34px) scale(0.98) rotate(10deg); }
+}
+
+/* confetti pieces */
+.confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.confetti i { position: absolute; width: 10px; height: 10px; opacity: 0.9; transform-origin: center; border-radius: 2px; }
+.confetti i.c1 { left: 8%; top: 10%; background: #ffb4a2; animation: confetti-fall 3000ms linear infinite 0ms; }
+.confetti i.c2 { left: 14%; top: 8%; background: #ffd166; animation: confetti-fall 3400ms linear infinite 120ms; }
+.confetti i.c3 { left: 20%; top: 12%; background: #6bd6ff; animation: confetti-fall 3600ms linear infinite 340ms; }
+.confetti i.c4 { left: 28%; top: 6%; background: #9be7ff; animation: confetti-fall 3100ms linear infinite 220ms; }
+.confetti i.c5 { left: 36%; top: 14%; background: #ffb4a2; animation: confetti-fall 3300ms linear infinite 410ms; }
+.confetti i.c6 { left: 44%; top: 9%; background: #ffd166; animation: confetti-fall 2900ms linear infinite 90ms; }
+.confetti i.c7 { left: 52%; top: 13%; background: #6bd6ff; animation: confetti-fall 3500ms linear infinite 200ms; }
+.confetti i.c8 { left: 60%; top: 7%; background: #9be7ff; animation: confetti-fall 3200ms linear infinite 540ms; }
+.confetti i.c9 { left: 68%; top: 11%; background: #ffb4a2; animation: confetti-fall 3000ms linear infinite 260ms; }
+.confetti i.c10{ left: 76%; top: 5%; background: #ffd166; animation: confetti-fall 3700ms linear infinite 420ms; }
+.confetti i.c11{ left: 84%; top: 9%; background: #6bd6ff; animation: confetti-fall 3600ms linear infinite 340ms; }
+.confetti i.c12{ left: 92%; top: 6%; background: #9be7ff; animation: confetti-fall 3300ms linear infinite 180ms; }
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-6px) rotate(0deg) scale(1); opacity: 0.98; }
+  60% { transform: translateY(60vh) rotate(240deg) scale(1); opacity: 0.9; }
+  100% { transform: translateY(120vh) rotate(540deg) scale(0.88); opacity: 0; }
+}
+
+/* CTA styling tweaks */
+.welcome-cta { font-size: 1.05rem; padding: 0.95rem 1.6rem; border-radius: 12px; }
+.welcome-cta .emoji { margin-left: 8px; transform: translateY(-1px); }
+.welcome-cta:active { transform: scale(0.98); }
+.welcome-cta { box-shadow: 0 18px 60px rgba(30,94,255,0.22); }
+
+/* subtle pop on hover */
+.welcome-cta:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 28px 80px rgba(30,94,255,0.28); }
+
