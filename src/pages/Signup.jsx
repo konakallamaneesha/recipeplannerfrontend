@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 import { useNavigate } from 'react-router-dom';
 import Login from './Login';
 
@@ -15,7 +16,7 @@ export default function Signup() {
     try {
       setLoading(true);
       setError('');
-      const res = await axios.post('http://localhost:5000/api/users/register', { username, password });
+  const res = await axios.post(`${API_URL}/api/users/register`, { username, password });
       if (res.data && res.data.success) {
         // store credentials briefly so user can be auto-logged in and prefilled
         try {

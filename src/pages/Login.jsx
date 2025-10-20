@@ -1,6 +1,7 @@
 // frontend/src/pages/Login.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 import { useNavigate } from 'react-router-dom';
 
 export default function Login({ embedded = false, onClose } = {}) {
@@ -23,7 +24,7 @@ export default function Login({ embedded = false, onClose } = {}) {
     try {
       setLoading(true);
       setError('');
-      const res = await axios.post('http://localhost:5000/api/users/login', { username, password });
+  const res = await axios.post(`${API_URL}/api/users/login`, { username, password });
       if (res.data && res.data.success) {
         // keep a minimal loggedIn flag so header can show Back button
         try { sessionStorage.setItem('loggedIn', '1'); sessionStorage.removeItem('prefillPassword'); } catch(e){}

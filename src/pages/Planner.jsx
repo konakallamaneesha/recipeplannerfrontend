@@ -1,6 +1,7 @@
 // frontend/src/pages/Planner.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 import jsPDF from 'jspdf';
 
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -25,7 +26,7 @@ export default function Planner() {
 
   const fetchRecipes = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/recipes');
+  const res = await axios.get(`${API_URL}/api/recipes`);
       setRecipes(res.data || []);
     } catch (err) { console.error(err); }
   };
@@ -35,7 +36,7 @@ export default function Planner() {
       const cats = ['breakfast','lunch','dinner'];
       const map = {};
       for (const c of cats) {
-        const res = await axios.get(`http://localhost:5000/api/recipes?category=${encodeURIComponent(c)}`);
+  const res = await axios.get(`${API_URL}/api/recipes?category=${encodeURIComponent(c)}`);
         map[c] = res.data || [];
       }
       setRecipesByCategory(map);
@@ -54,7 +55,7 @@ export default function Planner() {
   const fetchPlans = async () => {
     try {
       const username = sessionStorage.getItem('username');
-      const res = await axios.get(`http://localhost:5000/api/plans${username ? `?username=${encodeURIComponent(username)}` : ''}`);
+  const res = await axios.get(`${API_URL}/api/plans${username ? `?username=${encodeURIComponent(username)}` : ''}`);
       const map = {};
       (res.data || []).forEach(p => {
         map[p.day] = {
@@ -88,7 +89,7 @@ export default function Planner() {
       }
     };
     try {
-      const res = await axios.post('http://localhost:5000/api/plans', payload);
+  const res = await axios.post(`${API_URL}/api/plans`, payload);
       alert('Day saved to your plans');
       // update local saved selections map
       setSavedSelections(prev => ({ ...prev, [selectedDay]: payload.meals }));

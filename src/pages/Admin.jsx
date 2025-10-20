@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Admin() {
   const [authOk, setAuthOk] = useState(false);
@@ -32,14 +33,14 @@ export default function Admin() {
 
   const fetchIngredients = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/ingredients');
+  const res = await axios.get(`${API_URL}/api/ingredients`);
       setIngredients(res.data || []);
     } catch (e) { console.error(e); }
   };
 
   const fetchRecipes = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/recipes');
+  const res = await axios.get(`${API_URL}/api/recipes`);
       setRecipes(res.data || []);
     } catch (e) { console.error(e); }
   };
@@ -83,11 +84,11 @@ export default function Admin() {
       // ensure ingredients exist in master list
       for (const ing of recipeIngredients) {
         const exists = ingredients.find(i => i.name.toLowerCase() === (ing.name || '').toLowerCase());
-        if (!exists) await axios.post('http://localhost:5000/api/ingredients', { name: ing.name });
+  if (!exists) await axios.post(`${API_URL}/api/ingredients`, { name: ing.name });
       }
       await fetchIngredients();
 
-      await axios.post('http://localhost:5000/api/recipes', { title: recipeTitle, ingredients: recipeIngredients, category, nutrients: recipeNutrients });
+  await axios.post(`${API_URL}/api/recipes`, { title: recipeTitle, ingredients: recipeIngredients, category, nutrients: recipeNutrients });
 
       // clear form
       setRecipeTitle(''); setCategory('breakfast'); setRecipeIngredients([]); setRecipeNutrients([]);
