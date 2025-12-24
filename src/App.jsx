@@ -1,20 +1,32 @@
 // frontend/src/App.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Planner from './pages/Planner';
 import Signup from './pages/Signup';
 import Admin from './pages/Admin';
 import Welcome from './pages/Welcome';
-// animated background removed per user request
 
 function App() {
+
+  // 🔹 BACKEND WAKE-UP (Render cold start fix)
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/health`)
+      .then(() => console.log('Backend awake'))
+      .catch(() => {});
+  }, []);
+
   function HeaderControls() {
     const navigate = useNavigate();
     const location = useLocation();
     let logged = false;
-    try { logged = sessionStorage.getItem('loggedIn') === '1'; } catch (e) { logged = false; }
-    // Removed Admin link from header (hidden per user request)
+
+    try {
+      logged = sessionStorage.getItem('loggedIn') === '1';
+    } catch (e) {
+      logged = false;
+    }
+
     // On planner route, show Logout button when logged in
     if (location.pathname === '/planner' && logged) {
       return (
@@ -30,13 +42,23 @@ function App() {
             } catch (e) {}
             navigate('/');
           }}
-        >Logout</button>
+        >
+          Logout
+        </button>
       );
     }
-    // Default: if logged, show nothing; otherwise show Admin button on the main landing page
+
+    // Show Admin button only on landing page when not logged in
     if (logged) return null;
     if (location.pathname === '/') {
-      return (<button className="header-btn header-admin btn-effect" onClick={() => navigate('/admin')}>Admin</button>);
+      return (
+        <button
+          className="header-btn header-admin btn-effect"
+          onClick={() => navigate('/admin')}
+        >
+          Admin
+        </button>
+      );
     }
     return null;
   }
@@ -45,7 +67,9 @@ function App() {
     return (
       <>
         <header className="app-header">
-          <div className="app-header-inner">Weekly Recipe Planner and Meal Saver</div>
+          <div className="app-header-inner">
+            Weekly Recipe Planner and Meal Saver
+          </div>
           <div className="header-right">
             <HeaderControls />
           </div>

@@ -1,7 +1,7 @@
 // frontend/src/pages/Planner.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 import jsPDF from 'jspdf';
 
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -150,8 +150,16 @@ export default function Planner() {
         const meal = entry.meals[m];
         if (!meal || !meal.recipeId) continue;
         try {
-          const res = await axios.post('http://localhost:5000/api/recipes/calculate', { recipeId: meal.recipeId, people: meal.people });
-          doc.text(`${m.toUpperCase()} - ${meal.people} person(s)`, 12, y);
+          // find recipe title locally if available
+          const findInCategories = (id) => {
+            const all = [...(recipesByCategory.breakfast||[]), ...(recipesByCategory.lunch||[]), ...(recipesByCategory.dinner||[])];
+            return all.find(x => String(x._id) === String(id));
+          };
+          const recipeObj = findInCategories(meal.recipeId) || recipes.find(r => String(r._id) === String(meal.recipeId));
+          const recipeTitle = recipeObj ? recipeObj.title : '';
+
+          const res = await axios.post(`${API_URL}/api/recipes/calculate`, { recipeId: meal.recipeId, people: meal.people });
+          doc.text(`${m.toUpperCase()} - ${meal.people} person(s)${recipeTitle ? ` — ${recipeTitle}` : ''}`, 12, y);
           y += 8;
           (res.data || []).forEach(ing => {
             doc.text(`- ${ing.name}: ${ing.totalQuantity}`, 15, y);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Admin() {
   const [authOk, setAuthOk] = useState(false);
@@ -42,6 +42,60 @@ export default function Admin() {
     try {
   const res = await axios.get(`${API_URL}/api/recipes`);
       setRecipes(res.data || []);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
     } catch (e) { console.error(e); }
   };
 

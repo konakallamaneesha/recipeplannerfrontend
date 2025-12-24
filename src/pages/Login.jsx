@@ -1,7 +1,7 @@
 // frontend/src/pages/Login.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login({ embedded = false, onClose } = {}) {
